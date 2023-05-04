@@ -3,34 +3,34 @@
 #include <AccelStepper.h>
 
 
-const int upButton = 22;
-const int rightButton = 23;
-const int downButton = 24;
-const int leftButton = 25;
-const int actionButton = 26;
+const int upButton = 2;
+const int rightButton = 3;
+const int downButton = 4;
+const int leftButton = 5;
+const int actionButton = 6;
 
-const int cranePin = 10;
+const int cranePin = 49;
 int cranePosition = 0;
 Servo crane;
 
-const int enPinX = 30;
-const int dirPinX = 31;
-const int stepPinX = 32;
-const int csPinX = 33;
+const int enPinX = 26;
+const int dirPinX = 27;
+const int stepPinX = 28;
+const int csPinX = 29;
 
-const int enPinY = 34;
-const int dirPinY = 35;
-const int stepPinY = 36;
-const int csPinY = 37;
+const int enPinY = 30;
+const int dirPinY = 31;
+const int stepPinY = 32;
+const int csPinY = 33;
 
-const int enPinZ = 38;
-const int dirPinZ = 39;
-const int stepPinZ = 40;
-const int csPinZ = 41;
+const int enPinZ = 34;
+const int dirPinZ = 35;
+const int stepPinZ = 36;
+const int csPinZ = 37;
 
-#define SW_MOSI 42
-#define SW_MISO 43
-#define SW_SCK 44
+#define SW_MOSI 46
+#define SW_MISO 47
+#define SW_SCK 48
 #define R_SENSE 0.11f
 constexpr uint32_t stepsPerMm = 4000;
 
@@ -57,7 +57,6 @@ void setup() {
   digitalWrite(leftButton, HIGH);
   digitalWrite(actionButton, HIGH);
 
-
   pinMode(enPinX, OUTPUT);
   pinMode(stepPinX, OUTPUT);
   pinMode(dirPinX, OUTPUT);
@@ -65,6 +64,8 @@ void setup() {
 
   setupMotors();
   crane.attach(cranePin);
+  craneClose();
+  delay(500);
   craneOpen();
 }
 
@@ -84,7 +85,6 @@ void loop() {
   if (digitalRead(downButton) == LOW) {
     motorY.move(-100);  
   }
-  
 
   motorX.run();
   motorY.run();
