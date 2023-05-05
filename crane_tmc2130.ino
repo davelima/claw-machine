@@ -42,9 +42,6 @@ AccelStepper motorX = AccelStepper(motorX.DRIVER, stepPinX, dirPinX);
 AccelStepper motorY = AccelStepper(motorY.DRIVER, stepPinY, dirPinY);
 AccelStepper motorZ = AccelStepper(motorZ.DRIVER, stepPinZ, dirPinZ);
 
-
-boolean isRunning = false;
-
 void setup() {
   pinMode(upButton, INPUT);
   pinMode(rightButton, INPUT);
@@ -120,8 +117,8 @@ void craneAction()
   delay(1000);
 
   // bring X and Y to initial position
-  motorX.runToNewPosition(0);
-  motorY.runToNewPosition(0);
+  motorX.moveTo(0);
+  motorY.moveTo(0);
 
   delay(1000);
   craneOpen();
@@ -132,7 +129,7 @@ void setupMotors()
 {
   SPI.begin();
   driverX.begin();
-  driverX.rms_current(600);
+  driverX.rms_current(500);
   driverX.microsteps(4);
   driverX.en_pwm_mode(true);
   driverX.pwm_autoscale(true);
@@ -143,7 +140,7 @@ void setupMotors()
   motorX.enableOutputs();
 
   driverY.begin();
-  driverY.rms_current(600);
+  driverY.rms_current(500);
   driverY.microsteps(4);
   driverY.en_pwm_mode(true);
   driverY.pwm_autoscale(true);
@@ -154,8 +151,8 @@ void setupMotors()
   motorY.enableOutputs();
 
   driverZ.begin();
-  driverZ.rms_current(600);
-  driverZ.microsteps(4);
+  driverZ.rms_current(500);
+  driverZ.microsteps(8);
   driverZ.en_pwm_mode(true);
   driverZ.pwm_autoscale(true);
   motorZ.setMaxSpeed(50 * stepsPerMm);
