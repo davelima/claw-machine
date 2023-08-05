@@ -77,10 +77,7 @@ void setup()
 
   playerMP3Serial.begin(9600);
 
-  if (!playerMP3.begin(playerMP3Serial)) {  // COMUNICAÇÃO REALIZADA VIA SOFTWARE SERIAL
-    Serial.println(F("Falha:"));
-    Serial.println(F("1.conexões!"));
-    Serial.println(F("2.cheque o cartão SD!"));
+  if (!playerMP3.begin(playerMP3Serial)) {
     while(true){
       delay(0);
     }
