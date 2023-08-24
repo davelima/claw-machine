@@ -26,7 +26,7 @@ Servo crane;
 
 const int actionButton = 50;
 
-const int audioVolume = 25;
+const int audioVolume = 30;
 
 const int playerRx = A11;
 const int playerTx = A10;
@@ -129,18 +129,16 @@ void craneAction()
   Xaxis.stop();
   Yaxis.stop();
 
-  playerMP3.playFolder(1, 2);
+  playerMP3.advertise(1);
   Zaxis.runToNewPosition(1280);
   delay(500); // close crane here
   craneClose();
   delay(2000);
-  playerMP3.playFolder(1, 3);
   Zaxis.runToNewPosition(0);
   Xaxis.run();
   Yaxis.run();
   delay(1000);
 
-  playBgm();
   Xaxis.runToNewPosition(0);
   Yaxis.runToNewPosition(0);
   // bring X and Y to initial position
@@ -160,5 +158,5 @@ void craneAction()
 }
 
 void playBgm() {
-  playerMP3.playFolder(1, 1);
+  playerMP3.loopFolder(1);
 }
