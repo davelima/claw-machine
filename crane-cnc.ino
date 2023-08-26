@@ -116,7 +116,7 @@ void loop() {
 
 void craneClose()
 {
-  crane.write(36);
+  crane.write(35);
 }
 
 void craneOpen()
