@@ -139,16 +139,20 @@ void craneAction()
   Yaxis.run();
   delay(1000);
 
+  Xaxis.setAcceleration(1000);
+  Yaxis.setAcceleration(1000);
   Xaxis.runToNewPosition(0);
   Yaxis.runToNewPosition(0);
   // bring X and Y to initial position
   while (digitalRead(YaxisNearEndstop) == HIGH) {
-    Yaxis.runToNewPosition(Yaxis.currentPosition() - 50);
+    Yaxis.runToNewPosition(Yaxis.currentPosition() - 200);
   }
 
   while (digitalRead(XaxisLeftEndstop) == HIGH) {
-    Xaxis.runToNewPosition(Xaxis.currentPosition() - 50);
+    Xaxis.runToNewPosition(Xaxis.currentPosition() - 200);
   }
+  Xaxis.setAcceleration(3000);
+  Yaxis.setAcceleration(3000);
 
   Yaxis.setCurrentPosition(0);
   Xaxis.setCurrentPosition(0);
