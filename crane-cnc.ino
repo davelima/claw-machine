@@ -131,9 +131,9 @@ void craneAction()
 
   playerMP3.advertise(1);
   Zaxis.runToNewPosition(1280);
-  delay(500); // close crane here
+  delay(100);
   craneClose();
-  delay(2000);
+  delay(350);
   Zaxis.runToNewPosition(0);
   Xaxis.run();
   Yaxis.run();
