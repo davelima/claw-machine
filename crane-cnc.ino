@@ -48,9 +48,9 @@ void setup()
   Yaxis.setSpeed(3000);
   Yaxis.setPinsInverted(true);
 
-  Zaxis.setMaxSpeed(500);
-  Zaxis.setAcceleration(500);
-  Zaxis.setSpeed(500);
+  Zaxis.setMaxSpeed(1000);
+  Zaxis.setAcceleration(1000);
+  Zaxis.setSpeed(1000);
 
   crane.attach(cranePin);
   craneClose();
