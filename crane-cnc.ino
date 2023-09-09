@@ -130,7 +130,7 @@ void craneAction()
   Yaxis.stop();
 
   playerMP3.advertise(1);
-  Zaxis.runToNewPosition(1280);
+  Zaxis.runToNewPosition(1320);
   delay(100);
   craneClose();
   delay(350);
