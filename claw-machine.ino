@@ -7,6 +7,35 @@ AccelStepper Xaxis(1, 2, 5); // pin 2 = step, pin 5 = direction
 AccelStepper Yaxis(1, 3, 6);
 AccelStepper Zaxis(1, 4, 7);
 
+
+class DCMotor {
+  int spd = 255, pin1, pin2;
+
+public:
+
+  void Pinout(int in1, int in2) {
+    pin1 = in1;
+    pin2 = in2;
+    pinMode(pin1, OUTPUT);
+    pinMode(pin2, OUTPUT);
+  }
+  void Speed(int in1) {
+    spd = in1;
+  }
+  void Forward() {
+    analogWrite(pin1, spd);
+    digitalWrite(pin2, LOW);
+  }
+  void Backward() {
+    digitalWrite(pin1, LOW);
+    analogWrite(pin2, spd);
+  }
+  void Stop() {
+    digitalWrite(pin1, LOW);
+    digitalWrite(pin2, LOW);
+  }
+};
+
 const byte enablePin = 8;
 constexpr uint32_t stepsPerMm = 4000;
 
@@ -20,10 +49,6 @@ const int rightButton = 25;
 const int downButton = 26;
 const int leftButton = 27;
 
-const int cranePin = 32;
-int cranePosition = 0;
-Servo crane;
-
 const int actionButton = 50;
 
 const int audioVolume = 30;
@@ -33,6 +58,8 @@ const int playerTx = A10;
 
 SoftwareSerial playerMP3Serial(playerRx, playerTx);
 DFRobotDFPlayerMini playerMP3;
+
+DCMotor Claw;
 
 void setup()
 {
@@ -52,9 +79,8 @@ void setup()
   Zaxis.setAcceleration(1000);
   Zaxis.setSpeed(1000);
 
-  crane.attach(cranePin);
+  Claw.Pinout(32, 33);
   craneClose();
-  delay(500);
   craneOpen();
 
   pinMode(upButton, INPUT);
@@ -89,6 +115,8 @@ void setup()
 }
 
 void loop() {
+  Claw.Speed(255);
+
   if (digitalRead(rightButton) == LOW && digitalRead(XaxisRightEndstop) == HIGH) {
     Xaxis.move(50);
   }
@@ -116,12 +144,16 @@ void loop() {
 
 void craneClose()
 {
-  crane.write(35);
+  Claw.Forward();
+  delay(7000);
+  Claw.Stop();
 }
 
 void craneOpen()
 {
-  crane.write(100);
+  Claw.Backward();
+  delay(6000);
+  Claw.Stop();
 }
 
 void craneAction()
@@ -130,14 +162,13 @@ void craneAction()
   Yaxis.stop();
 
   playerMP3.advertise(1);
-  Zaxis.runToNewPosition(1320);
-  delay(100);
+  Zaxis.runToNewPosition(1200);
   craneClose();
-  delay(350);
+  delay(100);
   Zaxis.runToNewPosition(0);
   Xaxis.run();
   Yaxis.run();
-  delay(1000);
+  delay(500);
 
   Xaxis.setAcceleration(1000);
   Yaxis.setAcceleration(1000);
