@@ -7,35 +7,6 @@ AccelStepper Xaxis(1, 2, 5); // pin 2 = step, pin 5 = direction
 AccelStepper Yaxis(1, 3, 6);
 AccelStepper Zaxis(1, 4, 7);
 
-
-class DCMotor {
-  int spd = 255, pin1, pin2;
-
-public:
-
-  void Pinout(int in1, int in2) {
-    pin1 = in1;
-    pin2 = in2;
-    pinMode(pin1, OUTPUT);
-    pinMode(pin2, OUTPUT);
-  }
-  void Speed(int in1) {
-    spd = in1;
-  }
-  void Forward() {
-    analogWrite(pin1, spd);
-    digitalWrite(pin2, LOW);
-  }
-  void Backward() {
-    digitalWrite(pin1, LOW);
-    analogWrite(pin2, spd);
-  }
-  void Stop() {
-    digitalWrite(pin1, LOW);
-    digitalWrite(pin2, LOW);
-  }
-};
-
 const byte enablePin = 8;
 constexpr uint32_t stepsPerMm = 4000;
 
@@ -51,6 +22,8 @@ const int leftButton = 27;
 
 const int actionButton = 50;
 
+const int claw = 32;
+
 const int audioVolume = 30;
 
 const int playerRx = A11;
@@ -59,12 +32,11 @@ const int playerTx = A10;
 SoftwareSerial playerMP3Serial(playerRx, playerTx);
 DFRobotDFPlayerMini playerMP3;
 
-DCMotor Claw;
-
 void setup()
 {
   pinMode(enablePin, OUTPUT);
   digitalWrite(enablePin, LOW);
+  pinMode(claw, OUTPUT);
 
   Xaxis.setMaxSpeed(3000);
   Xaxis.setAcceleration(3000);
@@ -79,7 +51,6 @@ void setup()
   Zaxis.setAcceleration(1000);
   Zaxis.setSpeed(1000);
 
-  Claw.Pinout(32, 33);
   craneClose();
   craneOpen();
 
@@ -115,8 +86,6 @@ void setup()
 }
 
 void loop() {
-  Claw.Speed(255);
-
   if (digitalRead(rightButton) == LOW && digitalRead(XaxisRightEndstop) == HIGH) {
     Xaxis.move(50);
   }
@@ -144,16 +113,12 @@ void loop() {
 
 void craneClose()
 {
-  Claw.Forward();
-  delay(7000);
-  Claw.Stop();
+  digitalWrite(claw, LOW);
 }
 
 void craneOpen()
 {
-  Claw.Backward();
-  delay(6000);
-  Claw.Stop();
+  digitalWrite(claw, HIGH);
 }
 
 void craneAction()
@@ -162,13 +127,16 @@ void craneAction()
   Yaxis.stop();
 
   playerMP3.advertise(1);
-  Zaxis.runToNewPosition(1200);
+  Zaxis.runToNewPosition(750);
+  Zaxis.stop();
+  delay(400);
   craneClose();
-  delay(100);
+  delay(400);
+  Zaxis.run();
   Zaxis.runToNewPosition(0);
   Xaxis.run();
   Yaxis.run();
-  delay(500);
+  delay(250);
 
   Xaxis.setAcceleration(1000);
   Yaxis.setAcceleration(1000);
@@ -188,7 +156,7 @@ void craneAction()
   Yaxis.setCurrentPosition(0);
   Xaxis.setCurrentPosition(0);
 
-  delay(1000);
+  delay(800);
   craneOpen();
 }
 
