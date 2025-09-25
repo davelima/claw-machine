@@ -14,6 +14,7 @@ const int XaxisRightEndstop = 9;
 const int XaxisLeftEndstop = 43;
 const int YaxisEndstop = 10;
 const int YaxisNearEndstop = 11;
+const int ZaxisEndstop = 37;
 
 const int upButton = 24;
 const int rightButton = 25;
@@ -31,6 +32,8 @@ const int playerTx = A10;
 
 SoftwareSerial playerMP3Serial(playerRx, playerTx);
 DFRobotDFPlayerMini playerMP3;
+
+bool resettingY = true;
 
 void setup()
 {
@@ -51,9 +54,6 @@ void setup()
   Zaxis.setAcceleration(1000);
   Zaxis.setSpeed(1000);
 
-  craneClose();
-  craneOpen();
-
   pinMode(upButton, INPUT);
   pinMode(rightButton, INPUT);
   pinMode(downButton, INPUT);
@@ -62,6 +62,7 @@ void setup()
   pinMode(XaxisLeftEndstop, INPUT);
   pinMode(XaxisRightEndstop, INPUT);
   pinMode(YaxisNearEndstop, INPUT);
+  pinMode(ZaxisEndstop, INPUT);
 
   digitalWrite(upButton, HIGH);
   digitalWrite(rightButton, HIGH);
@@ -72,7 +73,10 @@ void setup()
   digitalWrite(XaxisRightEndstop, HIGH);
   digitalWrite(XaxisLeftEndstop, HIGH);
   digitalWrite(YaxisNearEndstop, HIGH);
+  digitalWrite(ZaxisEndstop, HIGH);
 
+  craneOpen();
+  
   playerMP3Serial.begin(9600);
 
   if (!playerMP3.begin(playerMP3Serial)) {
@@ -86,6 +90,13 @@ void setup()
 }
 
 void loop() {
+  if (resettingY == true && digitalRead(ZaxisEndstop) == HIGH) {
+    Zaxis.move(-50);
+  } else {
+    resettingY = false;
+    Zaxis.setCurrentPosition(0);
+  }
+
   if (digitalRead(rightButton) == LOW && digitalRead(XaxisRightEndstop) == HIGH) {
     Xaxis.move(50);
   }
@@ -95,11 +106,11 @@ void loop() {
   }
 
   if (digitalRead(upButton) == LOW && digitalRead(YaxisEndstop) == HIGH) {
-      Yaxis.move(50);
+    Yaxis.move(50);
   }
 
   if (digitalRead(downButton) == LOW && digitalRead(YaxisNearEndstop) == HIGH) {
-      Yaxis.move(-50);
+    Yaxis.move(-50);
   }
 
   if (digitalRead(actionButton) == LOW) {
@@ -127,16 +138,19 @@ void craneAction()
   Yaxis.stop();
 
   playerMP3.advertise(1);
-  Zaxis.runToNewPosition(750);
+  Zaxis.runToNewPosition(720);
   Zaxis.stop();
   delay(400);
   craneClose();
   delay(400);
   Zaxis.run();
-  Zaxis.runToNewPosition(0);
   Xaxis.run();
   Yaxis.run();
   delay(250);
+  Zaxis.runToNewPosition(0);
+  while (digitalRead(ZaxisEndstop) == HIGH) {
+    Zaxis.runToNewPosition(Zaxis.currentPosition() - 25);
+  }
 
   Xaxis.setAcceleration(1000);
   Yaxis.setAcceleration(1000);
@@ -150,11 +164,13 @@ void craneAction()
   while (digitalRead(XaxisLeftEndstop) == HIGH) {
     Xaxis.runToNewPosition(Xaxis.currentPosition() - 200);
   }
+
   Xaxis.setAcceleration(3000);
   Yaxis.setAcceleration(3000);
 
   Yaxis.setCurrentPosition(0);
   Xaxis.setCurrentPosition(0);
+  Zaxis.setCurrentPosition(0);
 
   delay(800);
   craneOpen();
