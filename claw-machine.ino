@@ -140,9 +140,9 @@ void craneAction()
   playerMP3.advertise(1);
   Zaxis.runToNewPosition(720);
   Zaxis.stop();
-  delay(400);
+  delay(100);
   craneClose();
-  delay(400);
+  delay(100);
   Zaxis.run();
   Xaxis.run();
   Yaxis.run();
@@ -154,19 +154,25 @@ void craneAction()
 
   Xaxis.setAcceleration(1000);
   Yaxis.setAcceleration(1000);
+  Xaxis.setSpeed(1000);
+  Yaxis.setSpeed(1000);
   Xaxis.runToNewPosition(0);
   Yaxis.runToNewPosition(0);
+
   // bring X and Y to initial position
   while (digitalRead(YaxisNearEndstop) == HIGH) {
-    Yaxis.runToNewPosition(Yaxis.currentPosition() - 200);
+
+    Yaxis.runToNewPosition(Yaxis.currentPosition() - 50);
   }
 
   while (digitalRead(XaxisLeftEndstop) == HIGH) {
-    Xaxis.runToNewPosition(Xaxis.currentPosition() - 200);
+    Xaxis.runToNewPosition(Xaxis.currentPosition() - 50);
   }
 
   Xaxis.setAcceleration(3000);
   Yaxis.setAcceleration(3000);
+  Xaxis.setSpeed(3000);
+  Yaxis.setSpeed(3000);
 
   Yaxis.setCurrentPosition(0);
   Xaxis.setCurrentPosition(0);
